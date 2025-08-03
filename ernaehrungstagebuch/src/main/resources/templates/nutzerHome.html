@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ernährungstagebuch</title>
+    <link rel="stylesheet" href="/css/nutzerHome.css">
+</head>
+<body>
+    <div id="obereLeiste">
+        <div id="benutzername" th:text="${benutzername}"></div>
+        <div id="email" th:text="${email}"></div>
+        <button id="ausloggen">Ausloggen</button>
+    </div>
+    <h1>Ernährungstagebücher</h1>
+    <div id="tagebuecher">
+    	<button th:each="text : ${buttons}" th:text="${text}" class="tagebuch"></button>
+	</div>
+    <div id="addPopup">
+    	<form>
+    		<div id="formular">
+	    		<div id="nameLabelUndInput">
+		    		<label for="name">Name:</label>
+		    		<input id="name" type="text">
+	    		</div>
+	    		<div id="eintraege"></div>
+    		</div>
+    		<div id="buttons">
+    			<button id="plus"></button>
+	    		<button id="speichern">Speichern</button>
+	    		<button id="abbrechen">Abbrechen</button>
+	    		<button id="loeschen">Löschen</button>
+	    		<label id="fehler"></label>
+    		</div>
+    	</form>
+    </div>
+    <script src="/js/nutzerHome.js"></script>
+</body>
+</html>

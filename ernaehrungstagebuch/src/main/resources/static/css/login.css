@@ -1,0 +1,153 @@
+#leftSide{
+    background-color: white;
+    flex: 3;
+    min-width: 0;
+}
+
+#nahrungsmittel{
+    width: 82%;
+    height: auto;
+    position: relative;
+    left: 50%;
+	transform: translateX(-50%);
+}
+
+#titel{
+    text-align: center;
+    font-size: 3vw;
+}
+
+body{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /*background-color: rgb(66, 77, 99);*/
+    background-color: white;  
+    margin: 0px; 
+}
+
+#rightSide{
+    background-color: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+#ansichtButtons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20%;
+}
+
+.ansichtButtons{
+    background-color: rgb(98, 221, 235);
+    color: white;
+    font-size: medium;
+    border: none;
+    border-radius: 5px;
+    font-size: 1vw;
+}
+
+#titel{
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+    width: 100%;
+}
+
+label{
+    font-family: Arial, Helvetica, sans-serif;
+    color: gray;
+    font-size: 0.7vw;
+    text-align: start;
+    margin-top: 7.5%;
+}
+
+#registrierenAnsichtButton{
+    color: gray;
+    cursor: pointer;
+}
+
+input{
+    background-color: white;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 1px solid rgb(98, 221, 235);
+}
+
+#login{
+    display: block;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(98, 221, 235);
+    color: white;
+    margin-top: 20%;
+    padding-top: 2.5%;
+    padding-bottom: 2.5%;
+    margin-bottom: 10%;
+    cursor: pointer;
+    font-size: 1vw;
+}
+
+#fehler{
+	color: red;
+	display: block;
+	text-align: center;
+}
+
+#loginAnsichtButton{
+	cursor: pointer;
+}
+
+@media only screen and (max-width: 600px){
+	body{
+		flex-direction: column;
+	}
+	
+	#leftSide{
+		flex: 1;
+	}
+	
+	#rightSide{
+		flex: 1;
+	}
+	
+	.ansichtButtons{
+		font-size: 5vw;
+	}
+	
+	input{
+		width: 50vw;
+		height: 3vh;
+	}
+	
+	label{
+		font-size: 4vw;
+		position: relative;
+		right: 20.5vw;
+	}
+	
+	#ansichtButtons{
+		margin-top: 10%;
+	}
+	
+	#login{
+		margin-top: 10%;
+		font-size: 5vw;
+	}
+	
+	form{
+		align-items: center;
+		justify-content: space-between;
+	}
+}

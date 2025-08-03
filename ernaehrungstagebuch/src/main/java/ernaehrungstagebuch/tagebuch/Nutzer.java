@@ -16,28 +16,38 @@ import jakarta.persistence.Table;
 @Table
 public class Nutzer {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) //Datenbank zuständig für die ID Erstellung
 	private long nutzerid;
 	private String benutzername;
 	private String passwort;
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "nutzerid")
+	private String email;
+	@OneToMany(mappedBy = "nutzer", cascade = CascadeType.ALL, orphanRemoval = true) //eins zu n Beziehung (verwaltet durch ernaehrungstagebuch)
 	private List<Ernaehrungstagebuch> ernaehrungstagebuecher = new ArrayList<>();
 	
-	public Nutzer(long id, String benutzername, String passwort) {
+	public Nutzer(long id, String benutzername, String passwort, String email) {
 		this.nutzerid = id;
 		this.benutzername = benutzername;
 		this.passwort = passwort;
+		this.email = email;
 	}
 
 	public Nutzer() {
 
 	}
 	
-	public Nutzer(String benutzername, String passwort) {
+	public Nutzer(String benutzername, String passwort, String email) {
 		super();
 		this.benutzername = benutzername;
 		this.passwort = passwort;
+		this.email = email;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public long getNutzerid() {
@@ -58,8 +68,8 @@ public class Nutzer {
 
 	@Override
 	public String toString() {
-		return "Nutzer [nutzerid=" + nutzerid + ", benutzername=" + benutzername + ", passwort=" + passwort
-				+ ", ernaehrungstagebuecher=" + ernaehrungstagebuecher + "]";
+		return "Nutzer [nutzerid=" + nutzerid + ", benutzername=" + benutzername + ", passwort=" + passwort + ", email="
+				+ email + ", ernaehrungstagebuecher=" + ernaehrungstagebuecher + "]";
 	}
 
 	public String getBenutzername() {
@@ -78,5 +88,24 @@ public class Nutzer {
 		this.passwort = passwort;
 	}
 	
+	public void addErnaehrungstagebuch(Ernaehrungstagebuch e) {
+		ernaehrungstagebuecher.add(e);
+		e.setNutzer(this);
+	}
 	
+	public void deleteErnaehrungstagebuch(String name) {
+		int i = 0;
+		
+		while(i < ernaehrungstagebuecher.size() && ! ernaehrungstagebuecher.get(i).getName().equals(name)) { //Es wird erst gestoppt, wenn das Ernaehrungstagebuch mit dem selben Namen gefunden wurde
+			i++;
+		}
+		
+		if(i < ernaehrungstagebuecher.size())
+			ernaehrungstagebuecher.remove(i);
+	}
+	
+	public void deleteErnaehrungstagebuch(int index) {
+		if(index < ernaehrungstagebuecher.size())
+			ernaehrungstagebuecher.remove(index);
+	}
 }

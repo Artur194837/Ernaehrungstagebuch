@@ -1,11 +1,15 @@
 package ernaehrungstagebuch.tagebuch;
 
+import java.util.Arrays;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,29 +19,34 @@ public class Nahrungsmittel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long nahrungsmittelid;
 	private String bezeichnung;
-	private int kcal;
-	private int fett;
-	private int zucker;
-	private int kohlenhydrate;
-	private String bildPfad;
-	
-	public Nahrungsmittel(long id, String bezeichnung, int kcal, int fett, int zucker, int kohlenhydrate, String bildPfad) {
-		this.nahrungsmittelid = id;
+	private double kcal;
+	private double fett;
+	private double kohlenhydrate;
+	private double eiweiss;
+	@Lob //Zur Speicherung von Bildern in der Datenbank
+	private byte [] bild;
+
+	public Nahrungsmittel(String bezeichnung, double kcal, double fett, double kohlenhydrate, double eiweiss,
+			byte[] bild) {
+		super();
 		this.bezeichnung = bezeichnung;
 		this.kcal = kcal;
 		this.fett = fett;
-		this.zucker = zucker;
 		this.kohlenhydrate = kohlenhydrate;
-		this.bildPfad = bildPfad;
+		this.eiweiss = eiweiss;
+		this.bild = bild;
 	}
 
-	public Nahrungsmittel(String bezeichnung, int kcal, int fett, int zucker, int kohlenhydrate, String bildPfad) {
+	public Nahrungsmittel(long nahrungsmittelid, String bezeichnung, double kcal, double fett, double kohlenhydrate,
+			double eiweiss, byte[] bild) {
+		super();
+		this.nahrungsmittelid = nahrungsmittelid;
 		this.bezeichnung = bezeichnung;
 		this.kcal = kcal;
 		this.fett = fett;
-		this.zucker = zucker;
 		this.kohlenhydrate = kohlenhydrate;
-		this.bildPfad = bildPfad;
+		this.eiweiss = eiweiss;
+		this.bild = bild;
 	}
 
 	public Nahrungsmittel() {
@@ -46,8 +55,9 @@ public class Nahrungsmittel {
 	
 	@Override
 	public String toString() {
-		return "Nahrungsmittel [id=" + nahrungsmittelid + ", bezeichnung=" + bezeichnung + ", kcal=" + kcal + ", fett=" + fett
-				+ ", zucker=" + zucker + ", kohlenhydrate=" + kohlenhydrate + "]";
+		return "Nahrungsmittel [nahrungsmittelid=" + nahrungsmittelid + ", bezeichnung=" + bezeichnung + ", kcal="
+				+ kcal + ", fett=" + fett + ", kohlenhydrate=" + kohlenhydrate + ", eiweiss=" + eiweiss + ", bild="
+				+ Arrays.toString(bild) + "]";
 	}
 
 	public long getNahrungsmittelid() {
@@ -66,35 +76,43 @@ public class Nahrungsmittel {
 		this.bezeichnung = bezeichnung;
 	}
 
-	public int getKcal() {
+	public double getKcal() {
 		return kcal;
 	}
 
-	public void setKcal(int kcal) {
+	public void setKcal(double kcal) {
 		this.kcal = kcal;
 	}
 
-	public int getFett() {
+	public double getFett() {
 		return fett;
 	}
 
-	public void setFett(int fett) {
+	public void setFett(double fett) {
 		this.fett = fett;
 	}
 
-	public int getZucker() {
-		return zucker;
-	}
-
-	public void setZucker(int zucker) {
-		this.zucker = zucker;
-	}
-
-	public int getKohlenhydrate() {
+	public double getKohlenhydrate() {
 		return kohlenhydrate;
 	}
 
-	public void setKohlenhydrate(int kohlenhydrate) {
+	public void setKohlenhydrate(double kohlenhydrate) {
 		this.kohlenhydrate = kohlenhydrate;
+	}
+	
+	public byte[] getBild() {
+		return bild;
+	}
+
+	public void setBild(byte[] bild) {
+		this.bild = bild;
+	}
+	
+	public double getEiweiss() {
+		return eiweiss;
+	}
+
+	public void setEiweiss(double eiweiss) {
+		this.eiweiss = eiweiss;
 	}
 }

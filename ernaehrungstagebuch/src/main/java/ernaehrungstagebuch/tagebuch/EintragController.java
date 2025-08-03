@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/einträge")
+@RequestMapping("/einträge") //Basis URL
 public class EintragController {
 	@Autowired
-	private EintragRepository eintragRepository;
+	private EintragRepository eintragRepository; //Zur Verwaltung der Einträge
 	
 	@GetMapping
     public List<Eintrag> getAllEinträge() {

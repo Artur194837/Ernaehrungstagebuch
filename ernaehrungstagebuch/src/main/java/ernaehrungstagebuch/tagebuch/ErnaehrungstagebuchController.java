@@ -15,9 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/ernährungstagebücher")
-public class ErnährungstagebuchController {
+public class ErnaehrungstagebuchController {
 	@Autowired
-	ErnährungstagebuchRepository ernährungstagebuchRepository;
+	ErnaehrungstagebuchRepository ernährungstagebuchRepository;
 	
 	@GetMapping
     public List<Ernaehrungstagebuch> getAllEinträge() {
