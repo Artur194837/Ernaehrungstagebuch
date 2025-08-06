@@ -1,4 +1,4 @@
-registerViewFunction = function(event){
+registerViewFunction = function(event){ /*Registrierungsansicht*/
     const button = event.currentTarget; // oder event.target
     button.style.color = "white";
     
@@ -63,7 +63,7 @@ registerViewFunction = function(event){
 	registerButton.addEventListener("click", loginFunction);
 };
 
-loginViewFunction = function(event){
+loginViewFunction = function(event){ /*Login Ansicht*/
     const button = event.currentTarget; // oder event.target
     button.style.color = "white";
     
@@ -145,8 +145,8 @@ benutzernameBlurFunction = function(event){
 };
 
 loginFunction = async function(event){
-    if(event.currentTarget.innerHTML == "Login"){
-        const response = await fetch("http://192.168.0.102:8080/", {
+    if(event.currentTarget.innerHTML == "Login"){ /*Wenn der Text im Button Login ist*/
+        const response = await fetch("http://localhost:8080/", { /*Anfrage an die REST API, ob der Nutzer bekannt ist*/
             method: "POST",
             body: JSON.stringify({
                 "email": document.getElementById("email").value,
@@ -160,12 +160,12 @@ loginFunction = async function(event){
 		const text = await response.text();
 		
         if(text == "erfolg")
-            window.location.href = "http://192.168.0.102:8080/home"; // Beispielziel bei Erfolg
+            window.location.href = "http://localhost:8080/home";
         else
             document.getElementById("fehler").innerHTML = "Die Email oder das Passwort ist falsch";
     }
-    else{
-        const response = await fetch("http://192.168.0.102:8080/nutzer", {
+    else{ /*Registrierung*/
+        const response = await fetch("http://localhost:8080/nutzer", {
             method: "POST",
             body: JSON.stringify({
                 email: document.getElementById("email").value,
@@ -179,10 +179,10 @@ loginFunction = async function(event){
 		
 		const text = await response.text();
 		
-        if(text != "erfolg")
+        if(text != "erfolg") /*Tritt ein wenn z.B. die Email Adresse schon bekannt ist*/
             document.getElementById("fehler").innerHTML = text;
         else{        
-	        window.location.href = "http://192.168.0.102:8080/home";
+	        window.location.href = "http://localhost:8080/home";
         }
     }
 };

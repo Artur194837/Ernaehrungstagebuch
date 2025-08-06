@@ -31,6 +31,7 @@ public class LoginHandler {
         		uebereinstimmenderNutzer = n;
         
         if(uebereinstimmenderNutzer != null) {
+        	System.out.println("Nutzer gefunden");
 	        session.setAttribute("benutzername", uebereinstimmenderNutzer.getBenutzername());
 	        session.setAttribute("email", uebereinstimmenderNutzer.getEmail());
 	        session.setAttribute("passwort", uebereinstimmenderNutzer.getPasswort());

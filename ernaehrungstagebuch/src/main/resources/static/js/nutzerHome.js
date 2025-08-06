@@ -1,33 +1,9 @@
-addTagebuch = async function(event){
-	const response = await fetch("http://192.168.0.102:8080/nutzer/addEr", {
-	            method: "POST",
-	            body: JSON.stringify({
-	                "email": document.getElementById("email").value,
-	                "passwort": document.getElementById("passwort").value
-	            }),
-	            headers: {
-	                "Content-type": "application/json; charset=UTF-8"
-	            }
-	        });
-	        
-			const text = await response.text();
-}
-
 let closeNahrungsmittelPopup = function(event){
 	event.target.parentElement.parentElement.parentElement.parentElement.removeChild(event.target.parentElement.parentElement.parentElement);
 };
 
-let deleteNahrungsmittel = function(event){
+let deleteNahrungsmittelEintrag = function(event){
 	event.preventDefault();
-	
-	/*for(let child of event.target.parentElement.children)
-		if(child.tagName === "BUTTON" && child !== event.target){
-			child.style.backgroundColor = "buttonface";
-			child.style.backgroundImage = "url(plus.png)";	
-		}
-		else
-			if(child.tagName === "LABEL")
-				child.innerHTML = "";*/
 	
 	let parent = event.target.parentElement.parentElement;
 				
@@ -35,29 +11,29 @@ let deleteNahrungsmittel = function(event){
 	
 	let menge = parent.querySelector(".menge");
 		
-	menge.dispatchEvent(new Event("input"));	
+	menge.dispatchEvent(new Event("input")); /*Event für die Nährwerte wird getriggert*/	
 };
 
-let nahrungsmittelButtonEventHandler = function(event){
+let nahrungsmittelButtonEventHandler = function(event){ /*EventHandler bei Auswahl eines Nahrungsmittels*/
 	event.preventDefault();
 	
 	let parentElement = event.target.parentElement.parentElement.parentElement.parentElement;
 		
 	for(let child of parentElement.children)
 		if(child.tagName === "BUTTON"){
-			child.style.backgroundImage = `url(${event.target.src})`;
+			child.style.backgroundImage = `url(${event.target.src})`; /*Src wird zur selben wie beim ausgewählten Nahrungsmittel*/
 			child.style.backgroundColor = "white";
 			child.style.border = "3px solid rgb(98, 221, 235)";
 		}
 		else
 			if(child.tagName === "LABEL")
-				child.innerHTML = event.target.parentElement.name;
+				child.innerHTML = event.target.parentElement.name; /*Bezeichnung wird gesetzt*/
 	
 	let deleteButton = document.createElement("button");
 	deleteButton.innerHTML = "Löschen";
 	deleteButton.style.color = "white";
 	deleteButton.style.backgroundColor = "red";
-	deleteButton.addEventListener("click", deleteNahrungsmittel);
+	deleteButton.addEventListener("click", deleteNahrungsmittelEintrag);
 	deleteButton.style.position = "absolute";
 	deleteButton.style.top = "100%";
 	deleteButton.style.cursor = "pointer";
@@ -65,6 +41,7 @@ let nahrungsmittelButtonEventHandler = function(event){
 	deleteButton.className = "loeschen";
 	parentElement.appendChild(deleteButton);	
 	
+	/* Neuer NahrungsmittelEintrag wird daneben eingefügt*/
 	let nahrungsmittel = document.createElement("label");
 	nahrungsmittel.className = "bezeichnung";
 	
@@ -122,11 +99,11 @@ let nahrungsmittelButtonEventHandler = function(event){
 	
 	event.target.parentElement.parentElement.parentElement.parentElement.parentElement.appendChild(div2);
 	
-	event.target.parentElement.parentElement.parentElement.parentElement.removeChild(event.target.parentElement.parentElement.parentElement);
+ 	event.target.parentElement.parentElement.parentElement.parentElement.removeChild(event.target.parentElement.parentElement.parentElement); /*Nahrungsmittel Auswahl Pop-Up wird entfernt*/
 };
 
-let getNahrungsmitelJson = async function(){
-	const response = await fetch("http://192.168.0.102:8080/nahrungsmittel/", {
+let getNahrungsmitelJson = async function(){ /*Funktion zum Erhalt von den gespeicherten Nahrungsmitteln*/
+	const response = await fetch("http://localhost:8080/nahrungsmittel/", {
 					            method: "GET"
 					        });
 							        
@@ -137,7 +114,7 @@ let nahrungsmittelJson = null;
 
 getNahrungsmitelJson().then(json => {
 	nahrungsmittelJson = json;
-});
+}); /*Nahrungsmittel ein Mal global speichern*/
 
 let showNahrungsmittelPopup = async function(event){
 	event.preventDefault()
@@ -175,7 +152,7 @@ let showNahrungsmittelPopup = async function(event){
 	div2.style.width = "auto";
 	div2.style.height = "auto";
 	
-	nahrungsmittelJson.forEach(nahrungsmittel => {
+	nahrungsmittelJson.forEach(nahrungsmittel => { /*Für jedes Nahrungsmittel im JSON wird ein Button angelegt*/
 		let button = document.createElement("button");
 		button.name = nahrungsmittel.bezeichnung;
 		button.className = "nahrungsmittelButton";
@@ -189,11 +166,7 @@ let showNahrungsmittelPopup = async function(event){
 		img.style.width = "100%";
 		img.style.objectFit = "cover";
 		
-		//let label = document.createElement("label");
-		//label.innerHTML = "Test";
-		
 		button.appendChild(img);
-		//button.appendChild(label);
 		div2.appendChild(button); 
 	});
 	
@@ -231,7 +204,7 @@ let naehrwerteBrechnen = function(event){
 			});	
 	}
 		
-	if(Number(kcal.toFixed(2)) !== kcal)
+	if(Number(kcal.toFixed(2)) !== kcal) /*Nur runden wenn sich die Menge an Nährwert dadurch ändert, sonst umsonst zwei Nachkommastellen*/
 		kcal = kcal.toFixed(2);
 	
 	if(Number(fett.toFixed(2)) !== fett)
@@ -248,7 +221,7 @@ let naehrwerteBrechnen = function(event){
 			element.textContent = kcal + " Kcal";
 		else{
 			if(element.getAttribute("class") === "echt"){
-				let anteilAnGesamtKcal = kcal / 2000;
+				let anteilAnGesamtKcal = kcal / 2000; /*Division durch den durchschnittlichen täglichen Bedarf*/
 				
 				let breiteInProzent = anteilAnGesamtKcal * 17;
 				
@@ -331,13 +304,13 @@ let showAddPopup = async function(event){
 		
 		let email = document.getElementById("email").innerHTML;
 		
-		const response = await fetch(`http://192.168.0.102:8080/nutzer?benutzername=${benutzername}&email=${email}`, {
+		const response = await fetch(`http://localhost:8080/nutzer?benutzername=${benutzername}&email=${email}`, {
 				            method: "GET"
 				        });
 						        
 		const nutzer = await response.json();
 		
-		for(let etb of nutzer["ernaehrungstagebuecher"])
+		for(let etb of nutzer["ernaehrungstagebuecher"]) /*Ausgewähltes Ernährungstagebuch speichern*/
 			if(etb["name"] === event.target.innerHTML){
 				ernaehrungstagebuch = etb;	
 				break;
@@ -367,7 +340,7 @@ let showAddPopup = async function(event){
 		
 		datumString += aktuellesDatum.getFullYear();
 		
-		let datumEnglisch = aktuellesDatum.getFullYear() + "-";
+		let datumEnglisch = aktuellesDatum.getFullYear() + "-"; 
 		
 		if(aktuellesDatum.getMonth() + 1 < 10)
 			datumEnglisch += "0";
@@ -407,7 +380,7 @@ let showAddPopup = async function(event){
 		if(ernaehrungstagebuch != null){
 			let aktuellerEintrag = null;
 			
-			for(let eintrag of ernaehrungstagebuch["eintraege"])
+			for(let eintrag of ernaehrungstagebuch["eintraege"]) /*Eintrag mit dem selben Datum wird rausgesucht*/
 				if(eintrag["datum"] === datumEnglisch){
 					aktuellerEintrag = eintrag;
 					break;
@@ -463,7 +436,7 @@ let showAddPopup = async function(event){
 					deleteButton.innerHTML = "Löschen";
 					deleteButton.style.color = "white";
 					deleteButton.style.backgroundColor = "red";
-					deleteButton.addEventListener("click", deleteNahrungsmittel);
+					deleteButton.addEventListener("click", deleteNahrungsmittelEintrag);
 					deleteButton.style.position = "absolute";
 					deleteButton.style.top = "100%";
 					deleteButton.style.cursor = "pointer";
@@ -487,6 +460,7 @@ let showAddPopup = async function(event){
 					
 					div3.appendChild(div2);
 				}
+				//Zusätzlichen Nahrungsmitteleintrag, damit ein weiteres Nahrungsmittel ausgewählt werden kann
 				let nahrungsmittel = document.createElement("label");
 				nahrungsmittel.className = "bezeichnung";
 				
@@ -548,7 +522,7 @@ let showAddPopup = async function(event){
 				
 				div3.appendChild(div2);
 			}
-			else{
+			else{ //Es gibt keinen passenden Eintrag
 				let nahrungsmittel = document.createElement("label");
 				nahrungsmittel.className = "bezeichnung";
 				
@@ -611,7 +585,7 @@ let showAddPopup = async function(event){
 				div3.appendChild(div2);
 			}
 		}
-		else{
+		else{ //Neues Ernährungstagebuch
 			let nahrungsmittel = document.createElement("label");
 			nahrungsmittel.className = "bezeichnung";
 			
@@ -680,107 +654,16 @@ let showAddPopup = async function(event){
 		div4.style.justifyContent = "space-between";
 		div4.style.backgroundColor = "rgb(234 239 238)";
 		
-		/*let labelKcal = document.createElement("label");
-		labelKcal.innerHTML = "Kcal:";
-		let kcal = document.createElement("label");
-		kcal.innerHTML = "0";
-		kcal.className = "kcal";
-		let divKcal = document.createElement("div");
-		divKcal.appendChild(labelKcal);
-		divKcal.appendChild(kcal);
-		
-		let labelFett = document.createElement("label");
-		labelFett.innerHTML = "Fett:";
-		let fett = document.createElement("label");
-		fett.innerHTML = "0";
-		fett.className = "fett";
-		let divFett = document.createElement("div");
-		divFett.appendChild(labelFett);
-		divFett.appendChild(fett);
-		
-		let labelZucker = document.createElement("label");
-		labelZucker.innerHTML = "Zucker:";
-		let zucker = document.createElement("label");
-		zucker.innerHTML = "0";
-		zucker.className = "zucker";
-		let divZucker = document.createElement("div");
-		divZucker.appendChild(labelZucker);
-		divZucker.appendChild(zucker);
-		
-		let labelKohlenhydrate = document.createElement("label");
-		labelKohlenhydrate.innerHTML = "Kohlenhydrate:";
-		let kohlenhydrate = document.createElement("label");
-		kohlenhydrate.innerHTML = "0";
-		kohlenhydrate.className = "kohlenhydrate";
-		let divKohlenhydrate = document.createElement("div");
-		divKohlenhydrate.appendChild(labelKohlenhydrate);
-		divKohlenhydrate.appendChild(kohlenhydrate);
-		
-		let labelEiweiss = document.createElement("label");
-		labelEiweiss.innerHTML = "Eiweiss:";
-		let eiweiss = document.createElement("label");
-		eiweiss.innerHTML = "0";
-		eiweiss.className = "eiweiss";
-		let divEiweiss = document.createElement("div");
-		divEiweiss.appendChild(labelEiweiss);
-		divEiweiss.appendChild(eiweiss);*/
-		
-		/*let balkendiagramm = document.createElement("svg");
-		balkendiagramm.className = "nährwerte";
-		balkendiagramm.style.width = "500px";
-		balkendiagramm.style.height = "200px";
-		balkendiagramm.setAttribute('aria-labelledby', "chartinfo");
-		balkendiagramm.setAttribute("viewBox", "0 0 500 200");
-		
-		let balkenKcal = document.createElement("g");
-		balkenKcal.tabIndex = "0";
-		balkendiagramm.appendChild(balkenKcal);
-		
-		let rectKcal = document.createElement("rect");
-		rectKcal.style.width = "70px";
-		rectKcal.style.height = "30px";
-		rectKcal.style.fill = "red";
-		rectKcal.style.display = "block";
-		rectKcal.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectKcal.setAttribute('y', '0');
-		balkenKcal.appendChild(rectKcal);
-		
-		let textKcal = document.createElement("text");
-		textKcal.setAttribute('x', '5'); // Position des Textes, relativ zum g-Element.
-		                                 // Hier 5px rechts vom Start des rect
-		textKcal.setAttribute('y', '20');
-		textKcal.innerHTML = "Kcal";
-		balkenKcal.appendChild(textKcal);*/
-		
 		let balkendiagramm = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		balkendiagramm.setAttribute("class", "nährwerte");
 		balkendiagramm.style.width = "100%";
 		balkendiagramm.style.height = "auto";
 		balkendiagramm.setAttribute('aria-labelledby', "chartinfo");
-		balkendiagramm.setAttribute("viewBox", "0 0 500 100"); // Korrekt gesetzt
-
-		// Optional: Füge das SVG-Element dem DOM hinzu, damit es sichtbar wird
-		// document.body.appendChild(balkendiagramm); // Beispiel: Fügt es am Ende des Body hinzu
+		balkendiagramm.setAttribute("viewBox", "0 0 500 100");
 
 		let desc = document.createElementNS("http://www.w3.org/2000/svg", "desc");
 		desc.textContent = "Täglicher durchschnittlicher Bedarf an Nährwerten";
 		balkendiagramm.appendChild(desc);
-		
-		let gFuerText = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		gFuerText.tabIndex = "0"; // Korrekt für tabindex
-		balkendiagramm.appendChild(gFuerText);
-		gFuerText.setAttribute('transform', 'translate(100, 20)');
-		
-		/*let rectTest = document.createElementNS("http://www.w3.org/2000/svg", "rect"); 
-		rectTest.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectTest.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
-
-		rectTest.style.width = "17%"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectTest.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
-		rectTest.style.fill = "rgb(137, 143, 139)";
-		rectTest.setAttribute('rx', '5');
-		rectTest.setAttribute('ry', '5');
-		gFuerText.appendChild(rectTest);*/
 		
 		let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		text.textContent = "Täglicher durchschnittlicher Bedarf an Nährwerten";
@@ -793,19 +676,18 @@ let showAddPopup = async function(event){
 		balkendiagramm.appendChild(text);
 		
 		let balkenKcal = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		balkenKcal.tabIndex = "0"; // Korrekt für tabindex
-		// Optional: Positioniere die gesamte Gruppe, wenn sie verschoben werden soll
-		balkenKcal.setAttribute('transform', 'translate(0, 50)'); // Verschiebt die ganze Gruppe um 10px nach rechts und unten
+		balkenKcal.tabIndex = "0"; 
+		balkenKcal.setAttribute('transform', 'translate(0, 50)'); 
 		balkenKcal.setAttribute("class", "kcal");
 		
 		balkendiagramm.appendChild(balkenKcal);
 		
 		let rectKcalDarkGray = document.createElementNS("http://www.w3.org/2000/svg", "rect"); 
-		rectKcalDarkGray.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectKcalDarkGray.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectKcalDarkGray.setAttribute('x', '0');
+		rectKcalDarkGray.setAttribute('y', '0');
 
-		rectKcalDarkGray.style.width = "17%"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectKcalDarkGray.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectKcalDarkGray.style.width = "17%";
+		rectKcalDarkGray.style.height = "10px";
 		rectKcalDarkGray.style.fill = "rgb(137, 143, 139)";
 		rectKcalDarkGray.setAttribute('rx', '5');
 		rectKcalDarkGray.setAttribute('ry', '5');
@@ -813,12 +695,11 @@ let showAddPopup = async function(event){
 		balkenKcal.appendChild(rectKcalDarkGray);
 		
 		let rectKcal = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-		// WICHTIG: x und y als ATTRIBUTE setzen, nicht als style
-		rectKcal.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectKcal.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectKcal.setAttribute('x', '0');
+		rectKcal.setAttribute('y', '0');
 
-		rectKcal.style.width = "40px"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectKcal.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectKcal.style.width = "40px";
+		rectKcal.style.height = "10px";
 		rectKcal.style.fill = "rgb(83, 188, 248)";
 		rectKcal.setAttribute('rx', '5');
 		rectKcal.setAttribute('ry', '5');
@@ -827,31 +708,27 @@ let showAddPopup = async function(event){
 		balkenKcal.appendChild(rectKcal);
 
 		let textKcal = document.createElementNS("http://www.w3.org/2000/svg", "text");
-		// WICHTIG: x und y als ATTRIBUTE setzen für Text in SVG
-		textKcal.setAttribute('x', '0'); // Position des Textes, relativ zum g-Element.
-		                                 // Hier 5px rechts vom Start des rect
-		textKcal.setAttribute('y', '25'); // Position des Textes. Ein y-Wert innerhalb des rect
-		                                  // muss oft experimentell gefunden werden, da y die Basislinie des Textes ist
-		textKcal.textContent = "0 Kcal"; // textContent ist besser als innerHTML für reinen Text
-		textKcal.style.fill = "black"; // Macht den Text sichtbar, wenn das Rechteck rot ist
+		textKcal.setAttribute('x', '0'); 
+		textKcal.setAttribute('y', '25');
+		textKcal.textContent = "0 Kcal"; 
+		textKcal.style.fill = "black"; 
 		textKcal.style.fontFamily = "Arial, Helvetica, sans-serif";
 		textKcal.setAttribute("class", "naehrwertMenge");
 		balkenKcal.appendChild(textKcal);
 
 		let balkenFett = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		balkenFett.tabIndex = "0"; // Korrekt für tabindex
-		// Optional: Positioniere die gesamte Gruppe, wenn sie verschoben werden soll
-		balkenFett.setAttribute('transform', 'translate(138.3, 50)'); // Verschiebt die ganze Gruppe um 10px nach rechts und unten
+		balkenFett.tabIndex = "0"; 
+		balkenFett.setAttribute('transform', 'translate(138.3, 50)'); 
 		balkenFett.setAttribute("class", "fett");
 		
 		balkendiagramm.appendChild(balkenFett);
 		
 		let rectFettDarkGray = document.createElementNS("http://www.w3.org/2000/svg", "rect"); 
-		rectFettDarkGray.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectFettDarkGray.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectFettDarkGray.setAttribute('x', '0');
+		rectFettDarkGray.setAttribute('y', '0');
 
-		rectFettDarkGray.style.width = "17%"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectFettDarkGray.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectFettDarkGray.style.width = "17%";
+		rectFettDarkGray.style.height = "10px";
 		rectFettDarkGray.style.fill = "rgb(137, 143, 139)";
 		rectFettDarkGray.setAttribute('rx', '5');
 		rectFettDarkGray.setAttribute('ry', '5');
@@ -859,12 +736,11 @@ let showAddPopup = async function(event){
 		balkenFett.appendChild(rectFettDarkGray);
 		
 		let rectFett = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-		// WICHTIG: x und y als ATTRIBUTE setzen, nicht als style
-		rectFett.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectFett.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectFett.setAttribute('x', '0');
+		rectFett.setAttribute('y', '0');
 
-		rectFett.style.width = "40px"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectFett.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectFett.style.width = "40px";
+		rectFett.style.height = "10px";
 		rectFett.style.fill = "rgb(83, 188, 248)";
 		rectFett.setAttribute('rx', '5');
 		rectFett.setAttribute('ry', '5');
@@ -873,31 +749,27 @@ let showAddPopup = async function(event){
 		balkenFett.appendChild(rectFett);
 
 		let textFett = document.createElementNS("http://www.w3.org/2000/svg", "text");
-		// WICHTIG: x und y als ATTRIBUTE setzen für Text in SVG
-		textFett.setAttribute('x', '0'); // Position des Textes, relativ zum g-Element.
-		                                 // Hier 5px rechts vom Start des rect
-		textFett.setAttribute('y', '25'); // Position des Textes. Ein y-Wert innerhalb des rect
-		                                  // muss oft experimentell gefunden werden, da y die Basislinie des Textes ist
-		textFett.textContent = "0 g Fett"; // textContent ist besser als innerHTML für reinen Text
-		textFett.style.fill = "black"; // Macht den Text sichtbar, wenn das Rechteck rot ist
+		textFett.setAttribute('x', '0');
+		textFett.setAttribute('y', '25');		                                 
+		textFett.textContent = "0 g Fett";
+		textFett.style.fill = "black";
 		textFett.style.fontFamily = "Arial, Helvetica, sans-serif";
 		textFett.setAttribute("class", "naehrwertMenge");
 		balkenFett.appendChild(textFett);
 		
 		let balkenKohlenhydrate = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		balkenKohlenhydrate.tabIndex = "0"; // Korrekt für tabindex
-		// Optional: Positioniere die gesamte Gruppe, wenn sie verschoben werden soll
-		balkenKohlenhydrate.setAttribute('transform', 'translate(276.6, 50)'); // Verschiebt die ganze Gruppe um 10px nach rechts und unten
+		balkenKohlenhydrate.tabIndex = "0";
+		balkenKohlenhydrate.setAttribute('transform', 'translate(276.6, 50)');
 		balkenKohlenhydrate.setAttribute("class", "kohlenhydrate");
 		
 		balkendiagramm.appendChild(balkenKohlenhydrate);
 		
 		let rectKohlenhydrateDarkGray = document.createElementNS("http://www.w3.org/2000/svg", "rect"); 
-		rectKohlenhydrateDarkGray.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectKohlenhydrateDarkGray.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectKohlenhydrateDarkGray.setAttribute('x', '0');
+		rectKohlenhydrateDarkGray.setAttribute('y', '0');
 
-		rectKohlenhydrateDarkGray.style.width = "17%"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectKohlenhydrateDarkGray.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectKohlenhydrateDarkGray.style.width = "17%";
+		rectKohlenhydrateDarkGray.style.height = "10px";
 		rectKohlenhydrateDarkGray.style.fill = "rgb(137, 143, 139)";
 		rectKohlenhydrateDarkGray.setAttribute('rx', '5');
 		rectKohlenhydrateDarkGray.setAttribute('ry', '5');
@@ -905,12 +777,11 @@ let showAddPopup = async function(event){
 		balkenKohlenhydrate.appendChild(rectKohlenhydrateDarkGray);
 		
 		let rectKohlenhydrate = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-		// WICHTIG: x und y als ATTRIBUTE setzen, nicht als style
-		rectKohlenhydrate.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectKohlenhydrate.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectKohlenhydrate.setAttribute('x', '0');
+		rectKohlenhydrate.setAttribute('y', '0');
 
-		rectKohlenhydrate.style.width = "40px"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectKohlenhydrate.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectKohlenhydrate.style.width = "40px";
+		rectKohlenhydrate.style.height = "10px";
 		rectKohlenhydrate.style.fill = "rgb(83, 188, 248)";
 		rectKohlenhydrate.setAttribute('rx', '5');
 		rectKohlenhydrate.setAttribute('ry', '5');
@@ -919,31 +790,27 @@ let showAddPopup = async function(event){
 		balkenKohlenhydrate.appendChild(rectKohlenhydrate);
 
 		let textKohlenhydrate = document.createElementNS("http://www.w3.org/2000/svg", "text");
-		// WICHTIG: x und y als ATTRIBUTE setzen für Text in SVG
-		textKohlenhydrate.setAttribute('x', '0'); // Position des Textes, relativ zum g-Element.
-		                                 // Hier 5px rechts vom Start des rect
-		textKohlenhydrate.setAttribute('y', '25'); // Position des Textes. Ein y-Wert innerhalb des rect
-		                                  // muss oft experimentell gefunden werden, da y die Basislinie des Textes ist
-		textKohlenhydrate.textContent = "0 g Kohlenhydrate"; // textContent ist besser als innerHTML für reinen Text
-		textKohlenhydrate.style.fill = "black"; // Macht den Text sichtbar, wenn das Rechteck rot ist
+		textKohlenhydrate.setAttribute('x', '0');
+		textKohlenhydrate.setAttribute('y', '25');		                                 
+		textKohlenhydrate.textContent = "0 g Kohlenhydrate";
+		textKohlenhydrate.style.fill = "black";
 		textKohlenhydrate.style.fontFamily = "Arial, Helvetica, sans-serif";
 		textKohlenhydrate.setAttribute("class", "naehrwertMenge");
 		balkenKohlenhydrate.appendChild(textKohlenhydrate); 
 		
 		let balkenEiweiss = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		balkenEiweiss.tabIndex = "0"; // Korrekt für tabindex
-		// Optional: Positioniere die gesamte Gruppe, wenn sie verschoben werden soll
-		balkenEiweiss.setAttribute('transform', 'translate(415, 50)'); // Verschiebt die ganze Gruppe um 10px nach rechts und unten
+		balkenEiweiss.tabIndex = "0";
+		balkenEiweiss.setAttribute('transform', 'translate(415, 50)');
 		balkenEiweiss.setAttribute("class", "eiweiss");
 		
 		balkendiagramm.appendChild(balkenEiweiss);
 		
 		let rectEiweissDarkGray = document.createElementNS("http://www.w3.org/2000/svg", "rect"); 
-		rectEiweissDarkGray.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectEiweissDarkGray.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectEiweissDarkGray.setAttribute('x', '0');
+		rectEiweissDarkGray.setAttribute('y', '0');
 
-		rectEiweissDarkGray.style.width = "17%"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectEiweissDarkGray.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectEiweissDarkGray.style.width = "17%";
+		rectEiweissDarkGray.style.height = "10px";
 		rectEiweissDarkGray.style.fill = "rgb(137, 143, 139)";
 		rectEiweissDarkGray.setAttribute('rx', '5');
 		rectEiweissDarkGray.setAttribute('ry', '5');
@@ -951,12 +818,11 @@ let showAddPopup = async function(event){
 		balkenEiweiss.appendChild(rectEiweissDarkGray);
 		
 		let rectEiweiss = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-		// WICHTIG: x und y als ATTRIBUTE setzen, nicht als style
-		rectEiweiss.setAttribute('x', '0'); // Startet an x-Koordinate 0 (relativ zum g-Element)
-		rectEiweiss.setAttribute('y', '0'); // Startet an y-Koordinate 0 (relativ zum g-Element)
+		rectEiweiss.setAttribute('x', '0');
+		rectEiweiss.setAttribute('y', '0');
 
-		rectEiweiss.style.width = "40px"; // Breite weiterhin als Style-Eigenschaft möglich
-		rectEiweiss.style.height = "10px"; // Höhe weiterhin als Style-Eigenschaft möglich
+		rectEiweiss.style.width = "40px";
+		rectEiweiss.style.height = "10px";
 		rectEiweiss.style.fill = "rgb(83, 188, 248)";
 		rectEiweiss.setAttribute('rx', '5');
 		rectEiweiss.setAttribute('ry', '5');
@@ -965,13 +831,10 @@ let showAddPopup = async function(event){
 		balkenEiweiss.appendChild(rectEiweiss);
 
 		let textEiweiss = document.createElementNS("http://www.w3.org/2000/svg", "text");
-		// WICHTIG: x und y als ATTRIBUTE setzen für Text in SVG
-		textEiweiss.setAttribute('x', '0'); // Position des Textes, relativ zum g-Element.
-		                                 // Hier 5px rechts vom Start des rect
-		textEiweiss.setAttribute('y', '25'); // Position des Textes. Ein y-Wert innerhalb des rect
-		                                  // muss oft experimentell gefunden werden, da y die Basislinie des Textes ist
-		textEiweiss.textContent = "0 g Eiweiss"; // textContent ist besser als innerHTML für reinen Text
-		textEiweiss.style.fill = "black"; // Macht den Text sichtbar, wenn das Rechteck rot ist
+		textEiweiss.setAttribute('x', '0');
+		textEiweiss.setAttribute('y', '25');		                                 
+		textEiweiss.textContent = "0 g Eiweiss";
+		textEiweiss.style.fill = "black";
 		textEiweiss.style.fontFamily = "Arial, Helvetica, sans-serif";
 		textEiweiss.setAttribute("class", "naehrwertMenge");
 		balkenEiweiss.appendChild(textEiweiss);
@@ -981,11 +844,11 @@ let showAddPopup = async function(event){
 		
 		eintraege.appendChild(div1);
 		
-		document.getElementById("name").value = event.target.innerHTML;
+		document.getElementById("name").value = event.target.innerHTML; //Namen des Ernährungstagebuchs setzen
 		
 		let mengen = document.getElementsByClassName("menge");
 		
-		for(let menge of mengen)
+		for(let menge of mengen) //Event Handler für die Darstellung der Nährwerte triggern
 			menge.dispatchEvent(new Event("input"));
 	}
 }
@@ -995,7 +858,7 @@ document.getElementById("plus").addEventListener("click", showAddPopup);
 let speichernEventHandler = async function(event){
 	event.preventDefault();
 	
-	let name = document.getElementById("name").value;
+	let name = document.getElementById("name").value; //Name des Ernährungstagebuchs
 	
 	if(name === "")
 		document.getElementById("fehler").innerHTML = "Es wurde kein Name eingegeben";
@@ -1024,9 +887,7 @@ let speichernEventHandler = async function(event){
 			
 			let tag = datum.substring(0, 2);
 			
-			datum = jahr + "-" + monat + "-" + tag;
-			
-			console.log(datum);
+			datum = jahr + "-" + monat + "-" + tag; //Für das Speichern in der DB ist das englische Format notwendig
 			
 			eintragJSON["datum"] = datum;
 			
@@ -1035,12 +896,10 @@ let speichernEventHandler = async function(event){
 			let eintragNahrungsmittel = [];
 			
 			for(let nahrungsmitteleintrag of nahrungsmittel.children){
-				let bezeichnung = nahrungsmitteleintrag.querySelector(".bezeichnung").innerHTML;
-				
-				console.log(bezeichnung);
+				let bezeichnung = nahrungsmitteleintrag.querySelector(".bezeichnung").innerHTML; //Bezeichnung des Nahrungsmittels
 				
 				if(bezeichnung.length > 0){
-					const response = await fetch("http://192.168.0.102:8080/nahrungsmittel/" + bezeichnung, {
+					const response = await fetch("http://localhost:8080/nahrungsmittel/" + bezeichnung, { //Die Bezeichnung allein reicht nicht um die Beziehung in der DB richtig zu speichern (ID notwendig)
 							            method: "GET"
 							        });
 									        
@@ -1064,23 +923,16 @@ let speichernEventHandler = async function(event){
 				json["ernaehrungstagebuch"]["eintraege"].push(eintragJSON);
 			}
 		}
-		console.log(JSON.stringify(json));
 		
-		const response = await fetch("http://192.168.0.102:8080/nutzer/addErnaehrungstagebuch", {
+		const response = await fetch("http://localhost:8080/nutzer/addErnaehrungstagebuch", {
 			            method: "POST",
 			            body: JSON.stringify(json),
 			            headers: {
 			                "Content-type": "application/json; charset=UTF-8"
 			            }
-			        });
-			        
-		const text = await response.text();
+			        });			  
 		
-		console.log(text);
-		
-		window.location.href = "http://192.168.0.102:8080/home";
-		
-		console.log("gespeichert");
+		window.location.href = "http://localhost:8080/home";
 	}
 };
 
@@ -1103,7 +955,7 @@ for(let tagebuchButton of tagebuchButtons)
 	tagebuchButton.addEventListener("click", showAddPopup);
 
 let loescheErnaehrungstagebuch = async function(event){
-	const response = await fetch("http://192.168.0.102:8080/nutzer/deleteErnaehrungstagebuch", {
+	const response = await fetch("http://localhost:8080/nutzer/deleteErnaehrungstagebuch", {
 				            method: "DELETE",
 				            body: JSON.stringify({
 								"benutzername": document.getElementById("benutzername").innerHTML,
@@ -1113,22 +965,18 @@ let loescheErnaehrungstagebuch = async function(event){
 				            headers: {
 				                "Content-type": "application/json; charset=UTF-8"
 				            }
-				        }).then(() => {window.location.href = "http://192.168.0.102:8080/home"});	
-						
-	//window.location.href = "http://192.168.0.102:8080/home";
-	
-	console.log("gelöscht");
+				        }).then(() => {window.location.href = "http://localhost:8080/home"});	
 }
 
 document.getElementById("loeschen").addEventListener("click", loescheErnaehrungstagebuch);
 
 let ausloggen = async function(event){
-	await fetch("http://192.168.0.102:8080/nutzer/logout", {
+	await fetch("http://localhost:8080/nutzer/logout", {
 	    method: "POST",
 	    credentials: "include"
 	});
 	
-	window.location.href = "http://192.168.0.102:8080";
+	window.location.href = "http://localhost:8080";
 }
 
 document.getElementById("ausloggen").addEventListener("click", ausloggen);
